@@ -1,5 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
+metadata:
+  name: rippled
 data:
   rippled.conf: |
     [server]
