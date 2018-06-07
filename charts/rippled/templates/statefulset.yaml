@@ -1,0 +1,99 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "rippled.fullname" . }}
+  labels:
+    app: {{ template "rippled.name" . }}
+    chart: {{ template "rippled.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  podManagementPolicy: OrderedReady
+  selector:
+    matchLabels:
+      app: {{ template "rippled.name" . }}
+      release: {{ .Release.Name }}
+  serviceName: {{ template "rippled.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "rippled.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - command:
+        - /opt/ripple/bin/rippled
+        - --conf
+        - /config/rippled.conf
+        name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 5006
+          protocol: TCP
+        - containerPort: 31235
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - '-ec'
+            - '/opt/ripple/bin/rippled --conf /config/rippled.conf server_info | grep ''"server_state" : "full",'''
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /config
+          name: config-volume
+        - mountPath: /data
+          name: rippled-data
+{{- if .Values.certManager.enabled -}}
+        - mountPath: /cert
+          name: cert
+{{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: rippled
+        name: config-volume
+{{- if .Values.certManager.enabled -}}
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: cert-manager-tls
+{{- end }}
+  updateStrategy:
+    type: OnDelete
+  volumeClaimTemplates:
+  - metadata:
+      name: rippled-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.persistentVolume.size }}
+      storageClassName: {{ .Values.persistentVolume.storageClassName }}

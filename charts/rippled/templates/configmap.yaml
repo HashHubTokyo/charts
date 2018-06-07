@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+data:
+  rippled.conf: |
+    [server]
+    port_peer
+    port_rpc
+    port_ws_public
+{{- if .Values.certManager.enabled -}}
+    ssl_key = /cert/tls.key
+    ssl_cert = /cert/tls.crt
+{{- end }}
+
+    [port_peer]
+    ip=0.0.0.0
+    port=31235
+    protocol=peer
+    admin=127.0.0.1
+
+    [port_rpc]
+    ip=127.0.0.1
+    port=5005
+    protocol=http
+    admin=127.0.0.1
+
+    [port_ws_public]
+    ip=0.0.0.0
+    port={{ .Values.service.port.wsWss }}
+    protocol=ws,wss
+    admin=127.0.0.1
+
+    [database_path]
+    /data
+
+    [node_db]
+    type=RocksDB
+    path=/data
+    compression=1
+    online_delete=24000
+    advisory_delete=0
+    filter_bits=12
+    cache_mb=256
+    file_size_mb=8
+    file_size_mult=2
+
+    [ips]
+    r.ripple.com 51235
+
+    [validator_list_sites]
+    http://vl.ripple.com
+
+    [validator_list_keys]
+    ED2677ABFFD1B33AC6FBC3062B71F1E8397C1505E1C42C64D11AD1B28FF73F4734
+
+    [validation_quorum]
+    3
+
+    [node_size]
+    huge
+
+    [ledger_history]
+    256
+
+    [sntp_servers]
+    0.asia.pool.ntp.org
+    1.asia.pool.ntp.org
+    2.asia.pool.ntp.org
+    3.asia.pool.ntp.org
+
+    [rpc_startup]
+    { "command": "log_level", "severity": "error" }

@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  rippled:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2018-06-07T13:12:13.859882534+09:00
+    description: Ripple daemon
+    digest: 7f68392e3b36e3278fa1fb0780c9af8f4f45f89f51b174e398cc56e04d9dfd87
+    name: rippled
+    urls:
+    - rippled/rippled-0.1.0.tgz
+    version: 0.1.0
+generated: 2018-06-07T13:12:13.859393296+09:00
