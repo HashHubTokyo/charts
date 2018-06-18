@@ -30,9 +30,16 @@ persistence:
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources: {}
+#  limits:
+#    memory: 1536Mi
 #  requests:
 #    memory: 512Mi
 #    cpu: 300m
+
+## Configure node selector
+##
+nodeSelector: {}
+#  cloud.google.com/gke-preemptible: "true"
 
 # Custom bitcoind configuration file used to override default bitcoind settings
 configurationFile:

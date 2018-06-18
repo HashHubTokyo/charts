@@ -11,11 +11,14 @@ home: https://bitcoin.org/
 icon: https://bitcoin.org/img/icons/logotop.svg
 sources:
   - https://github.com/kubernetes/charts
-  - https://github.com/kuberstack/bitcoind
-  - https://github.com/kylemanna/docker-bitcoind
+  - https://github.com/HashHubTokyo/charts/bitcoind
+  - https://github.com/HashHubTokyo/docker-bitcoind
 maintainers:
-  - name: daniel-yavorovich
-    email: daniel@arilot.com
-  - name: govale
-    email: shiyanval@gmail.com
+  - name: Masaki Muranaka
+    email: monaka@hashhub.tokyo
+# Daniel and Govale are maintainers of the original chart.
+#  - name: daniel-yavorovich
+#    email: daniel@arilot.com
+#  - name: govale
+#    email: shiyanval@gmail.com
 engine: gotpl
